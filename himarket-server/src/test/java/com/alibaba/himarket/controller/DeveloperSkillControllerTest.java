@@ -30,7 +30,6 @@ import com.alibaba.himarket.dto.params.skill.CreateDeveloperSkillParam;
 import com.alibaba.himarket.dto.params.skill.UpdateDeveloperSkillParam;
 import com.alibaba.himarket.dto.result.skill.DeveloperSkillResult;
 import com.alibaba.himarket.service.DeveloperSkillService;
-import com.alibaba.himarket.support.enums.SkillVisibility;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,20 +56,19 @@ class DeveloperSkillControllerTest {
     @Test
     void listSkills_personal_delegatesToService() {
         stubUser();
-        DeveloperSkillResult r = buildResult("p1", true, false, SkillVisibility.PRIVATE);
+        DeveloperSkillResult r = buildResult("p1", true, false);
         when(developerSkillService.listSkills(DEV_ID, "personal", null)).thenReturn(List.of(r));
 
         List<DeveloperSkillResult> result = controller.listSkills("personal", null);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).isOwner()).isTrue();
-        assertThat(result.get(0).getVisibility()).isEqualTo(SkillVisibility.PRIVATE);
     }
 
     @Test
     void listSkills_official_delegatesToService() {
         stubUser();
-        DeveloperSkillResult r = buildResult("p2", false, true, SkillVisibility.PUBLIC);
+        DeveloperSkillResult r = buildResult("p2", false, true);
         when(developerSkillService.listSkills(DEV_ID, "official", null)).thenReturn(List.of(r));
 
         List<DeveloperSkillResult> result = controller.listSkills("official", null);
@@ -111,35 +109,33 @@ class DeveloperSkillControllerTest {
     // ── createSkill ─────────────────────────────────────────────────────────
 
     @Test
-    void createSkill_private_returnsResult() {
+    void createSkill_returnsResult() {
         stubUser();
         CreateDeveloperSkillParam param = new CreateDeveloperSkillParam();
         param.setName("my-skill");
-        param.setVisibility(SkillVisibility.PRIVATE);
 
-        DeveloperSkillResult expected = buildResult("p3", true, false, SkillVisibility.PRIVATE);
+        DeveloperSkillResult expected = buildResult("p3", true, false);
         when(developerSkillService.createSkill(DEV_ID, param)).thenReturn(expected);
 
         DeveloperSkillResult result = controller.createSkill(param);
 
-        assertThat(result.getVisibility()).isEqualTo(SkillVisibility.PRIVATE);
         assertThat(result.isOwner()).isTrue();
     }
 
     // ── updateSkill ─────────────────────────────────────────────────────────
 
     @Test
-    void updateSkill_changeVisibilityToPublic_returnsUpdated() {
+    void updateSkill_returnsUpdated() {
         stubUser();
         UpdateDeveloperSkillParam param = new UpdateDeveloperSkillParam();
-        param.setVisibility(SkillVisibility.PUBLIC);
+        param.setName("updated-skill");
 
-        DeveloperSkillResult expected = buildResult("p4", true, false, SkillVisibility.PUBLIC);
+        DeveloperSkillResult expected = buildResult("p4", true, false);
         when(developerSkillService.updateSkill(DEV_ID, "p4", param)).thenReturn(expected);
 
         DeveloperSkillResult result = controller.updateSkill("p4", param);
 
-        assertThat(result.getVisibility()).isEqualTo(SkillVisibility.PUBLIC);
+        assertThat(result.getName()).isEqualTo("skill-p4");
     }
 
     // ── deleteSkill ─────────────────────────────────────────────────────────
@@ -155,12 +151,11 @@ class DeveloperSkillControllerTest {
     // ── helpers ─────────────────────────────────────────────────────────────
 
     private DeveloperSkillResult buildResult(
-            String productId, boolean isOwner, boolean isOfficial, SkillVisibility visibility) {
+            String productId, boolean isOwner, boolean isOfficial) {
         return DeveloperSkillResult.builder()
                 .productId(productId)
                 .name("skill-" + productId)
                 .tags(List.of())
-                .visibility(visibility)
                 .isOwner(isOwner)
                 .isOfficial(isOfficial)
                 .status("PENDING")

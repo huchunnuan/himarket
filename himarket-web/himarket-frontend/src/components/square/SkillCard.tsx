@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DownloadOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { DownloadOutlined, EditOutlined, DeleteOutlined, UserOutlined } from "@ant-design/icons";
 import { Popconfirm, message } from "antd";
 import { deleteDeveloperSkill } from "../../lib/apis/developerSkill";
 
@@ -11,6 +11,7 @@ interface SkillCardProps {
   downloadCount?: number;
   onClick?: () => void;
   sourceTag?: "personal" | "official";
+  developerUsername?: string;
   // personal view extras
   isOwner?: boolean;
   productId?: string;
@@ -26,6 +27,7 @@ export function SkillCard({
   downloadCount,
   onClick,
   sourceTag,
+  developerUsername,
   isOwner,
   productId,
   onEdit,
@@ -76,7 +78,7 @@ export function SkillCard({
               }
             `}
           >
-            {sourceTag === "personal" ? "个人" : "官方"}
+            {sourceTag === "personal" ? "个人" : "平台"}
           </span>
         )}
         {isOwner ? (
@@ -133,7 +135,13 @@ export function SkillCard({
           </div>
         )}
 
-        <div className="flex items-center justify-end text-gray-400 text-xs">
+        <div className="flex items-center justify-between text-gray-400 text-xs">
+          {developerUsername ? (
+            <span className="flex items-center gap-1">
+              <UserOutlined className="text-[10px]" />
+              {developerUsername}
+            </span>
+          ) : <span />}
           <span className="tabular-nums tracking-tight">{releaseDate}</span>
         </div>
       </div>

@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { Modal, Form, Input, Select, Button, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import type { SkillVisibility } from "../../lib/apis/developerSkill";
 import { createDeveloperSkill, uploadDeveloperSkillPackage } from "../../lib/apis/developerSkill";
 
 /**
@@ -99,7 +98,6 @@ export function CreateSkillModal({ open, onClose, onCreated }: Props) {
         name: values.name,
         description: values.description,
         tags: values.tags ?? [],
-        visibility: values.visibility as SkillVisibility,
       });
 
       if (resp.code !== "SUCCESS") return;
@@ -181,17 +179,6 @@ export function CreateSkillModal({ open, onClose, onCreated }: Props) {
             placeholder={t("skillTagsPlaceholder", "输入标签后按回车添加")}
             tokenSeparators={[","]}
           />
-        </Form.Item>
-
-        <Form.Item
-          name="visibility"
-          label={t("skillVisibility", "可见性")}
-          initialValue="PUBLIC"
-        >
-          <Select>
-            <Select.Option value="PUBLIC">{t("visibilityPublic", "公开（所有开发者可见）")}</Select.Option>
-            <Select.Option value="PRIVATE">{t("visibilityPrivate", "私有（仅自己可见）")}</Select.Option>
-          </Select>
         </Form.Item>
 
         <Form.Item label={t("skillPackage", "Skill 压缩包（可选）")}>

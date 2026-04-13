@@ -1,6 +1,5 @@
 import request, { type RespI } from "../request";
 
-export type SkillVisibility = "PUBLIC" | "PRIVATE";
 export type SkillListType = "all" | "personal" | "official";
 
 export interface DeveloperSkillResult {
@@ -8,25 +7,23 @@ export interface DeveloperSkillResult {
   name: string;
   description?: string;
   tags: string[];
-  visibility: SkillVisibility;
   isOwner: boolean;
   isOfficial: boolean;
   status: string;
   createdAt?: number;
+  developerUsername?: string;
 }
 
 interface CreateSkillReq {
   name: string;
   description?: string;
   tags?: string[];
-  visibility?: SkillVisibility;
 }
 
 interface UpdateSkillReq {
   name?: string;
   description?: string;
   tags?: string[];
-  visibility?: SkillVisibility;
 }
 
 export function listDeveloperSkills(params: {

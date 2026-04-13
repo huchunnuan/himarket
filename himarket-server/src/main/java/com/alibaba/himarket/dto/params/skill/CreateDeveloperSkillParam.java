@@ -19,7 +19,6 @@
 
 package com.alibaba.himarket.dto.params.skill;
 
-import com.alibaba.himarket.support.enums.SkillVisibility;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -38,6 +37,4 @@ public class CreateDeveloperSkillParam {
     private String description;
 
     private List<String> tags;
-
-    private SkillVisibility visibility = SkillVisibility.PUBLIC;
 }

@@ -554,6 +554,24 @@ function SkillDetail() {
 
         {/* Right sidebar: download card + related */}
         <div className="w-full lg:w-[420px] flex-shrink-0 order-1 lg:order-2 space-y-3">
+          {/* Re-upload card (owner only) */}
+          {isOwner && (
+            <div className="bg-white rounded-xl overflow-hidden shadow-sm" style={{ border: '1px solid #e8eaef' }}>
+              <div className="px-4 py-3">
+                <span className="text-sm font-semibold text-gray-800">{t('manageSkill', '管理 Skill')}</span>
+              </div>
+              <div className="px-4 pb-4">
+                <Button
+                  icon={<CloudUploadOutlined />}
+                  onClick={() => setReuploadOpen(true)}
+                  block
+                >
+                  {t('reuploadPackage', '重新上传压缩包')}
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-xl overflow-hidden shadow-sm" style={{ border: '1px solid #e8eaef' }}>
             {/* Card header: title + version selector */}
             <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid #edeef3' }}>
@@ -712,24 +730,6 @@ function SkillDetail() {
               </div>
             )}
           </div>
-
-          {/* Re-upload card (owner only) */}
-          {isOwner && (
-            <div className="bg-white rounded-xl overflow-hidden shadow-sm" style={{ border: '1px solid #e8eaef' }}>
-              <div className="px-4 py-3">
-                <span className="text-sm font-semibold text-gray-800">{t('manageSkill', '管理 Skill')}</span>
-              </div>
-              <div className="px-4 pb-4">
-                <Button
-                  icon={<CloudUploadOutlined />}
-                  onClick={() => setReuploadOpen(true)}
-                  block
-                >
-                  {t('reuploadPackage', '重新上传压缩包')}
-                </Button>
-              </div>
-            </div>
-          )}
 
           <RelatedSkills currentProductId={skillProductId!} currentSkillTags={skillConfig?.skillTags} />
         </div>

@@ -26,8 +26,10 @@ import com.alibaba.himarket.core.utils.IdGenerator;
 import com.alibaba.himarket.dto.params.skill.CreateDeveloperSkillParam;
 import com.alibaba.himarket.dto.params.skill.UpdateDeveloperSkillParam;
 import com.alibaba.himarket.dto.result.skill.DeveloperSkillResult;
+import com.alibaba.himarket.entity.Developer;
 import com.alibaba.himarket.entity.NacosInstance;
 import com.alibaba.himarket.entity.Product;
+import com.alibaba.himarket.repository.DeveloperRepository;
 import com.alibaba.himarket.repository.NacosInstanceRepository;
 import com.alibaba.himarket.repository.ProductRepository;
 import com.alibaba.himarket.service.DeveloperSkillService;
@@ -36,7 +38,6 @@ import com.alibaba.himarket.service.ProductService;
 import com.alibaba.himarket.service.SkillService;
 import com.alibaba.himarket.support.enums.ProductStatus;
 import com.alibaba.himarket.support.enums.ProductType;
-import com.alibaba.himarket.support.enums.SkillVisibility;
 import com.alibaba.himarket.support.product.ProductFeature;
 import com.alibaba.himarket.support.product.SkillConfig;
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
 
     private final ProductRepository productRepository;
     private final NacosInstanceRepository nacosInstanceRepository;
+    private final DeveloperRepository developerRepository;
     private final SkillService skillService;
     private final PortalService portalService;
     private final ProductService productService;
@@ -79,8 +81,6 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
 
         List<String> tags =
                 param.getTags() != null ? new ArrayList<>(param.getTags()) : new ArrayList<>();
-        SkillVisibility visibility =
-                param.getVisibility() != null ? param.getVisibility() : SkillVisibility.PUBLIC;
 
         Product product =
                 Product.builder()
@@ -90,7 +90,6 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
                         .type(ProductType.AGENT_SKILL)
                         .status(ProductStatus.PENDING)
                         .developerId(developerId)
-                        .visibility(visibility)
                         .feature(
                                 ProductFeature.builder()
                                         .skillConfig(
@@ -123,9 +122,6 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
         }
         if (param.getDescription() != null) {
             product.setDescription(param.getDescription());
-        }
-        if (param.getVisibility() != null) {
-            product.setVisibility(param.getVisibility());
         }
         if (param.getTags() != null) {
             SkillConfig config = getOrCreateSkillConfig(product);
@@ -191,15 +187,14 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
         if ("official".equals(type)) {
             return productRepository.findByTypeAndDeveloperIdIsNull(ProductType.AGENT_SKILL);
         }
-        // all: official + own + other public
+        // all: official + own + other personal
         List<Product> result = new ArrayList<>();
         result.addAll(productRepository.findByTypeAndDeveloperIdIsNull(ProductType.AGENT_SKILL));
         result.addAll(
                 productRepository.findByDeveloperIdAndType(developerId, ProductType.AGENT_SKILL));
-        List<Product> othersPublic =
-                productRepository.findByTypeAndDeveloperIdIsNotNullAndVisibility(
-                        ProductType.AGENT_SKILL, SkillVisibility.PUBLIC);
-        othersPublic.stream()
+        List<Product> others =
+                productRepository.findByTypeAndDeveloperIdIsNotNull(ProductType.AGENT_SKILL);
+        others.stream()
                 .filter(p -> !developerId.equals(p.getDeveloperId()))
                 .forEach(result::add);
         return result;
@@ -228,10 +223,7 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
         if (developerId.equals(product.getDeveloperId())) {
             return; // owner
         }
-        if (SkillVisibility.PUBLIC.equals(product.getVisibility())) {
-            return; // public skill
-        }
-        throw new BusinessException(ErrorCode.UNAUTHORIZED, "Access denied");
+        // All personal skills are readable
     }
 
     private void checkOwnership(Product product, String developerId) {
@@ -266,16 +258,25 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
             createdAt = product.getCreateAt().toInstant(ZoneOffset.UTC).toEpochMilli();
         }
 
+        String developerUsername = null;
+        if (product.getDeveloperId() != null) {
+            developerUsername =
+                    developerRepository
+                            .findByDeveloperId(product.getDeveloperId())
+                            .map(Developer::getUsername)
+                            .orElse(null);
+        }
+
         return DeveloperSkillResult.builder()
                 .productId(product.getProductId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .tags(tags)
-                .visibility(product.getVisibility())
                 .isOwner(currentDeveloperId.equals(product.getDeveloperId()))
                 .isOfficial(product.getDeveloperId() == null)
                 .status(product.getStatus() != null ? product.getStatus().name() : null)
                 .createdAt(createdAt)
+                .developerUsername(developerUsername)
                 .build();
     }
 }

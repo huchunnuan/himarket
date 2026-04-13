@@ -19,7 +19,6 @@
 
 package com.alibaba.himarket.dto.result.skill;
 
-import com.alibaba.himarket.support.enums.SkillVisibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.Builder;
@@ -33,7 +32,6 @@ public class DeveloperSkillResult {
     private String name;
     private String description;
     private List<String> tags;
-    private SkillVisibility visibility;
 
     @JsonProperty("isOwner")
     private boolean isOwner;
@@ -43,4 +41,5 @@ public class DeveloperSkillResult {
 
     private String status;
     private Long createdAt;
+    private String developerUsername;
 }

@@ -82,4 +82,6 @@ public class ProductResult implements OutputConverter<ProductResult, Product> {
     private Boolean isSubscribed;
 
     private String developerId;
+
+    private String developerUsername;
 }

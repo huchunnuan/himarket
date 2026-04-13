@@ -267,7 +267,7 @@ function Square(props: { activeType: string }) {
                   options={[
                     { value: "all", label: t("skillTabAll", "全部 Skill") },
                     { value: "personal", label: t("skillTabPersonal", "个人 Skill") },
-                    { value: "official", label: t("skillTabOfficial", "官方 Skill") },
+                    { value: "official", label: t("skillTabOfficial", "平台 Skill") },
                   ]}
                 />
               )}
@@ -345,6 +345,7 @@ function Square(props: { activeType: string }) {
                         skillTags={skill.tags}
                         onClick={() => navigate(`/skills/${skill.productId}`)}
                         sourceTag={skill.isOfficial ? "official" : "personal"}
+                        developerUsername={skill.developerUsername || (skill.isOfficial ? "admin" : undefined)}
                         isOwner={skill.isOwner}
                         onEdit={skill.isOwner ? () => navigate(`/skills/${skill.productId}`) : undefined}
                         onDelete={skill.isOwner ? () => fetchDeveloperSkills(skillTab) : undefined}
@@ -365,6 +366,7 @@ function Square(props: { activeType: string }) {
                           skillTags={product.skillConfig?.skillTags}
                           downloadCount={product.skillConfig?.downloadCount}
                           sourceTag={product.developerId ? "personal" : "official"}
+                          developerUsername={product.developerUsername || (product.developerId ? undefined : "admin")}
                           onClick={() => handleViewDetail(product)}
                         />
                       ) : product.type === 'WORKER' ? (

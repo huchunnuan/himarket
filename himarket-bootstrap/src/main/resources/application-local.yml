@@ -1,0 +1,24 @@
+# 本地开发配置 - 连接 Docker 中的 MySQL
+# 在 IDEA Run Configuration 中添加 VM Options:
+#   -Dspring.profiles.active=local
+#   --add-opens java.base/java.lang=ALL-UNNAMED
+# 或设置环境变量 SPRING_PROFILES_ACTIVE=local
+
+server:
+  port: 8090
+
+db:
+  host: 127.0.0.1
+  port: 3306
+  name: portal_db
+  username: portal_user
+  password: password
+
+jwt:
+  secret: 9AtIdF+2HxmgAMibbKvEQND0ZBf6ZuSY67zxAaNhMj0=
+
+acp:
+  default-runtime: remote
+  remote:
+    host: 127.0.0.1
+    port: 8080

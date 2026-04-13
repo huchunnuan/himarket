@@ -23,6 +23,7 @@ import com.alibaba.himarket.converter.IconConverter;
 import com.alibaba.himarket.converter.ProductFeatureConverter;
 import com.alibaba.himarket.support.enums.ProductStatus;
 import com.alibaba.himarket.support.enums.ProductType;
+import com.alibaba.himarket.support.enums.SkillVisibility;
 import com.alibaba.himarket.support.product.Icon;
 import com.alibaba.himarket.support.product.ProductFeature;
 import jakarta.persistence.*;
@@ -83,4 +84,12 @@ public class Product extends BaseEntity {
     @Column(name = "feature", columnDefinition = "json")
     @Convert(converter = ProductFeatureConverter.class)
     private ProductFeature feature;
+
+    @Column(name = "developer_id", length = 64)
+    private String developerId;
+
+    @Column(name = "visibility", length = 16, nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private SkillVisibility visibility = SkillVisibility.PUBLIC;
 }

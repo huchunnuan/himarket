@@ -34,6 +34,7 @@ export interface IProductDetail {
   modelConfig?: IModelConfig;
   skillConfig?: ISkillConfig;
   workerConfig?: IWorkerConfig;
+  developerId?: string | null;
   enabled: boolean;
   feature?: {
     modelFeature: {

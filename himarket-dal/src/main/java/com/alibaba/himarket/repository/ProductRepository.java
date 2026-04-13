@@ -21,6 +21,7 @@ package com.alibaba.himarket.repository;
 
 import com.alibaba.himarket.entity.Product;
 import com.alibaba.himarket.support.enums.ProductType;
+import com.alibaba.himarket.support.enums.SkillVisibility;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -70,4 +71,40 @@ public interface ProductRepository extends BaseRepository<Product, Long> {
      * @return the list of products matching the names
      */
     List<Product> findByNameInAndAdminId(Collection<String> names, String adminId);
+
+    /**
+     * Find products by developer ID and type
+     *
+     * @param developerId the developer ID
+     * @param type the product type
+     * @return the list of products
+     */
+    List<Product> findByDeveloperIdAndType(String developerId, ProductType type);
+
+    /**
+     * Find products by type where developer ID is null (official products)
+     *
+     * @param type the product type
+     * @return the list of products
+     */
+    List<Product> findByTypeAndDeveloperIdIsNull(ProductType type);
+
+    /**
+     * Find products by type and visibility, excluding a specific developer's private products
+     *
+     * @param type the product type
+     * @param visibility the visibility
+     * @return the list of products
+     */
+    List<Product> findByTypeAndDeveloperIdIsNotNullAndVisibility(
+            ProductType type, SkillVisibility visibility);
+
+    /**
+     * Check if a product with the given name and type exists
+     *
+     * @param name the product name
+     * @param type the product type
+     * @return true if exists
+     */
+    boolean existsByNameAndType(String name, ProductType type);
 }

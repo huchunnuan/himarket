@@ -75,8 +75,7 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
     @Override
     public DeveloperSkillResult createSkill(String developerId, CreateDeveloperSkillParam param) {
         if (productRepository.existsByNameAndType(param.getName(), ProductType.AGENT_SKILL)) {
-            throw new BusinessException(
-                    ErrorCode.CONFLICT, "Skill 名称已存在: " + param.getName());
+            throw new BusinessException(ErrorCode.CONFLICT, "Skill 名称已存在: " + param.getName());
         }
 
         List<String> tags =
@@ -194,9 +193,7 @@ public class DeveloperSkillServiceImpl implements DeveloperSkillService {
                 productRepository.findByDeveloperIdAndType(developerId, ProductType.AGENT_SKILL));
         List<Product> others =
                 productRepository.findByTypeAndDeveloperIdIsNotNull(ProductType.AGENT_SKILL);
-        others.stream()
-                .filter(p -> !developerId.equals(p.getDeveloperId()))
-                .forEach(result::add);
+        others.stream().filter(p -> !developerId.equals(p.getDeveloperId())).forEach(result::add);
         return result;
     }
 

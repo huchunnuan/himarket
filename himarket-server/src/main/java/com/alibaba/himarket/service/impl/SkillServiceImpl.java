@@ -82,11 +82,7 @@ public class SkillServiceImpl implements SkillService {
         if (StrUtil.isNotBlank(skillMdName) && !skillMdName.equals(product.getName())) {
             throw new BusinessException(
                     ErrorCode.INVALID_PARAMETER,
-                    "压缩包中 SKILL.md 的名称("
-                            + skillMdName
-                            + ")与产品名称("
-                            + product.getName()
-                            + ")不一致");
+                    "压缩包中 SKILL.md 的名称(" + skillMdName + ")与产品名称(" + product.getName() + ")不一致");
         }
 
         SkillConfig config = product.getFeature().getSkillConfig();
@@ -817,9 +813,10 @@ public class SkillServiceImpl implements SkillService {
             while ((entry = zis.getNextEntry()) != null) {
                 String entryName = entry.getName();
                 // 匹配 SKILL.md（可能在根目录或子目录中）
-                String fileName = entryName.contains("/")
-                        ? entryName.substring(entryName.lastIndexOf('/') + 1)
-                        : entryName;
+                String fileName =
+                        entryName.contains("/")
+                                ? entryName.substring(entryName.lastIndexOf('/') + 1)
+                                : entryName;
                 if ("SKILL.md".equals(fileName)) {
                     String content = new String(zis.readAllBytes(), StandardCharsets.UTF_8);
                     return parseNameFromFrontMatter(content);
